@@ -21,8 +21,130 @@ class Db {
 
     return response;
   }
+
+
+  static prepareLikeParam(param){
+    return "%" + param + "%";
+  }
+
+
 }
 
+class PageData {
+  static COLUMN_01 = "c01";
+  static COLUMN_02 = "c02";
+  static COLUMN_03 = "c03";
+  static COLUMN_04 = "c04"; 
+  static COLUMN_05 = "c05";
+  static COLUMN_06 = "c06";
+}
+
+class EntityData {
+
+  static async addMdModel(req){
+
+    let params = {};
+
+    let qry = ""
+
+    qry += " INSERT INTO ";
+    qry += " "  + MdModel.table + " ( ";
+
+    qry += "  " + MdModel.name ;
+    qry += " ," + MdModel.syUserId;
+    qry += " ," + MdModel.isActive;    
+    qry += " ," + MdModel.articleId;
+    qry += " ," + MdModel.file;
+    qry += " ," + MdModel.weight;
+    qry += " ) ";
+
+    qry += " VALUES ( ";
+    qry += "  :n ";
+    qry += " ,:sid ";
+    qry += " ,:ia ";
+    qry += " ,:aid ";
+    qry += " ,:f ";
+    qry += " ,:w ";
+    qry += " ) ";
+
+
+    params["n"] = req.body.modName;
+    // TODO: change this
+    params["sid"] = 1;
+    params["ia"] = 0;
+    params["aid"] = req.body.artId;
+    params["f"] = "";
+    params["w"] = 0;
+
+    const out = await Db.query(qry, params);
+    return out
+
+  }
+
+
+  static async activateModel(req){
+    let params = {};
+
+    let qry = ""
+
+    qry += " UPDATE ";
+    qry += " "  + MdModel.table + "  ";
+
+    qry += " SET ";
+    qry += "  " + MdModel.isActive + " = :ia ";
+    qry += " ," + MdModel.file + " = :f ";
+    
+    qry += " WHERE ";
+    qry += " " + MdModel.id + " = :id ";
+
+    params["ia"] = 1;
+    params["f"] = req.body.fName;
+    params["id"] = req.body.model;
+
+    const out = await Db.query(qry, params);
+    return out
+
+  }
+
+}
+
+class ListData {
+
+  static async getMdArticleList(req) {
+
+
+    let params = {}
+
+    let fltr = req.query.filter;
+
+
+
+    let qry = "";
+
+    qry += "  SELECT ";
+    qry += "  "+ MdArticle.id +" ";
+    qry += " ,"+ MdArticle.name +" ";
+  
+    qry += "  FROM " + MdArticle.table + " ";
+
+    qry += "  WHERE " + MdArticle.id +" > 1 ";
+
+    if (fltr != null && fltr != "") {
+      
+      qry += "  AND " + MdArticle.name +" ";
+      qry += "  LIKE :f ";
+      params["f"] = Db.prepareLikeParam(fltr);
+
+    }
+  
+  
+    const out = await Db.query(qry,params);
+    return out;
+
+  }
+
+
+}
 
 
 
@@ -76,4 +198,8 @@ module.exports = {
   MdArticleDim,
   MdModel,
   SyUser,
+  ListData,
+  EntityData,
+  PageData
+
 }

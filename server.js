@@ -5,6 +5,11 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 
+
+// define global root directory
+var path = require('path');
+global.__rootname = path.resolve(__dirname);
+
 // defining the Express app
 const app = express();
 
@@ -12,8 +17,8 @@ const app = express();
 app.use(helmet());
 
 // using bodyParser to parse JSON bodies into JS objects
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 // enabling CORS for all requests
 app.use(cors());

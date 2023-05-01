@@ -1,50 +1,58 @@
-const db = require('../models/db');
-const multer = require("multer");
-const path = require('path');
+const { EntityData } = require('../models/db');
+const { MutlerManager, StorageManager } = require('../models/lib');
 
 
+var storage = MutlerManager.mutlerStorage(StorageManager.UPLOADS_DIRECTORY);
+var upload = MutlerManager.mutlerUpload(storage)
+
+//TODO: add 500 response and 400 response
+
+async function addMdModel(req, res) {
+
+    let raw_response = await EntityData.addMdModel(req);
 
 
-var storage = multer.diskStorage({
-	destination: (req,file,callback)=> {
-		callback(null,path.join(__dirname + '\\..\\uploads'));
-        console.log(path.join(__dirname + '\\..\\uploads'));
-	},
-	filename: (req,file,callback)=> {
-		callback(null, Date.now() + file.originalname);
-	}
-});
+    let out = {}
+    out.DATA = raw_response.DATA;
 
-var upload = multer({
-	storage: storage,
-	fileFilter: (req,file,callback)=> {  
-        let ext = path.extname(file.originalname);
-        if(ext == '.zip' || ext == '.txt') {
-            console.log('Extension Check');
-            callback(null,true);
-        }
-        else {
-            callback('Only .zip are allowed', false);
-        }
-	}
-}).single('file');
+    res.status(200).send(out);
+
+}
+
+async function uploadModel( req , res){
 
 
-
-async function uploadTest( req , res){
-
-    upload(req, res, function(err) {
+    // TODO: return meaningful information
+    upload(req, res, async function(err) {
         if(err) {
             console.log(err);
-            return res.end("Error uploading");
+            res.end("Error uploading");
         }
-        res.end("File is uploaded");
+        else {
+
+            // activate the model
+            test = await EntityData.activateModel(req);
+
+            res.end("File is uploaded");
+        }
+        
     });
 
+}
+
+async function testPathNames( req , res){
+
+    var data = {}
+
+    data.DATA = StorageManager.UPLOADS_DIRECTORY
+
+    res.status(200).json(data);
 }
 
 
 
 module.exports = {
-    uploadTest,
+    uploadModel,
+    addMdModel,
+    testPathNames
 }

@@ -7,13 +7,17 @@ const ctrlModels = require("../controllers/model");
 /**
  * Articles
  */
-router.get('/articles', ctrlArticles.getTest);
+router.get('/article/list', ctrlArticles.getMdArticleList);
 
 /**
  * Models
  */
-router.post('/model/new', ctrlModels.uploadTest);
+router.post('/model/upload', ctrlModels.uploadModel);
+router.post('/model/add', ctrlModels.addMdModel);
 
-
+/** TODO: DELETE THIS
+ * Test
+ */
+router.get('/test', ctrlModels.testPathNames);
 
 module.exports = router; 

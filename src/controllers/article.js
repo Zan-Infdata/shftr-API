@@ -1,30 +1,39 @@
-const db = require('../models/db');
+const { ListData, PageData, MdArticle } = require('../models/db');
 
+// TODO: add 500 response
 
-async function getTest( _ , res){
+async function getMdArticleList( req , res){
   
 
-  let qry = ""
+  let raw_response = await ListData.getMdArticleList(req);
+  
+  let response = [];
 
-  qry += "  SELECT ";
-  qry += "  * ";
-  qry += "  FROM " + db.MdArticle.table;
+  for (i in raw_response.DATA){
+    let item = raw_response.DATA[i];
 
+    let row = {};
+    
 
-  const reposonse = await db.Db.query(qry);
+    row[PageData.COLUMN_01] = item[MdArticle.id];
+    row[PageData.COLUMN_02] = item[MdArticle.name];
+
+    
+
+    response.push(row);
+  }
 
 
   out = {}
-  out.DATA = reposonse
-  out.CNT = reposonse.length
+  out.DATA = response
+  out.CNT = response.length
 
-
-  res.status(200).json(out);
+  res.status(200).send(out);
 
 }
 
 
 
 module.exports = {
-    getTest
+  getMdArticleList
 }
