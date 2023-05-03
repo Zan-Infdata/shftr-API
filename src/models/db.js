@@ -41,6 +41,33 @@ class PageData {
 
 class EntityData {
 
+
+  static async getSyUserByName(name){
+
+    let params = {};
+
+    let qry = "";
+
+    qry += "  SELECT ";
+    qry += "  "+ SyUser.id +" ";
+    qry += " ,"+ SyUser.name +" ";
+    qry += " ,"+ SyUser.hash +" ";
+    qry += " ,"+ SyUser.salt +" ";
+  
+    qry += "  FROM " + SyUser.table + " ";
+
+    qry += "  WHERE " + SyUser.name +" = :n ";
+
+
+    params["n"] = name;
+
+    const out = await Db.query(qry,params);
+
+    return out;
+
+  }
+
+
   static async addMdModel(req){
 
     let params = {};
@@ -69,8 +96,7 @@ class EntityData {
 
 
     params["n"] = req.body.modName;
-    // TODO: change this
-    params["sid"] = 1;
+    params["sid"] = req.body.uid;
     params["ia"] = 0;
     params["aid"] = req.body.artId;
     params["f"] = "";
@@ -155,6 +181,7 @@ class MdArticle {
     static name = "MD_ARTICLE_NAME";
     static file = "MD_ARTICLE_FILE";
     static dimId = "MD_ARTICLE_DIM_ID";
+    static desc = "MD_ARTICLE_DESC";
 
 }
 
@@ -184,6 +211,8 @@ class SyUser {
 
     static id = "SY_USER_ID";
     static name = "SY_USER_NAME";
+    static hash = "SY_USER_HASH";
+    static salt = "SY_USER_SALT";
 }
 
 

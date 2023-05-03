@@ -1,4 +1,4 @@
-const { EntityData } = require('../models/db');
+const { EntityData, SyUser } = require('../models/db');
 const { MutlerManager, StorageManager } = require('../models/lib');
 
 
@@ -9,17 +9,23 @@ var upload = MutlerManager.mutlerUpload(storage)
 
 async function addMdModel(req, res) {
 
+    // get user id
+    let user = await EntityData.getSyUserByName(req.body.uname);
+    req.body.uid = user.DATA[0][SyUser.id];
+
     let raw_response = await EntityData.addMdModel(req);
 
 
     let out = {}
     out.DATA = raw_response.DATA;
 
+    out.DATA.userId = user.DATA[0][SyUser.id];
+
     res.status(200).send(out);
 
 }
 
-async function uploadModel( req , res){
+async function uploadModel(req , res){
 
 
     // TODO: return meaningful information
@@ -40,19 +46,10 @@ async function uploadModel( req , res){
 
 }
 
-async function testPathNames( req , res){
-
-    var data = {}
-
-    data.DATA = StorageManager.UPLOADS_DIRECTORY
-
-    res.status(200).json(data);
-}
 
 
 
 module.exports = {
     uploadModel,
     addMdModel,
-    testPathNames
 }
