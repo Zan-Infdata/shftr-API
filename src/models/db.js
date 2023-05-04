@@ -206,6 +206,16 @@ class MdModel {
     static articleId = "MD_ARTICLE_ID";
 }
 
+class MdCust {
+  static table = "md_cust";
+
+  static id = "MD_CUST_ID";
+  static name = "MD_CUST_NAME";
+  static desc = "MD_CUST_DESC";
+  static date = "MD_CUST_DATE";
+  static isActive = "MD_CUST_ISACTIVE";
+}
+
 class SyUser {
     static table = "sy_user";
 
@@ -215,6 +225,14 @@ class SyUser {
     static salt = "SY_USER_SALT";
 }
 
+class TGr {
+  static table = "t_gr";
+
+  static id = "T_GR_ID";
+  static time = "T_GR_TIME";
+  static custId = "MD_CUST_ID";
+  static articleId = "MD_ARTICLE_ID";
+}
 
 
 
@@ -226,7 +244,9 @@ module.exports = {
   MdArticle,
   MdArticleDim,
   MdModel,
+  MdCust,
   SyUser,
+  TGr,
   ListData,
   EntityData,
   PageData
