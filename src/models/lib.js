@@ -104,7 +104,7 @@ class AuthManager {
             name: [SyUser.name],
             exp: parseInt(expiry.getTime() / 1000),
           },
-          "superSecretPassword"
+          process.env.JWT_SECRET
         );
     }
 }

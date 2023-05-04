@@ -1,5 +1,6 @@
 dbConfig.json
 node_modules
+.env
 
 **/uploads/**
 

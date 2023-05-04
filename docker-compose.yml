@@ -1,0 +1,9 @@
+version: "3.5"
+services:
+  node-api:
+    container_name: shftr-API
+    restart: always
+    ports:
+      - "3001:3001"
+    image: shftr-api
+    build: ./
