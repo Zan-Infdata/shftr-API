@@ -1,6 +1,7 @@
 dbConfig.json
 node_modules
 .env
+.vscode
 
 **/uploads/**
 

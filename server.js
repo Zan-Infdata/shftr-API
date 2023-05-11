@@ -5,6 +5,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const passport = require("passport");
+require('dotenv').config();
 
 
 // define global root directory
