@@ -1,5 +1,5 @@
-const { ListData, PageData, MdArticle } = require('../models/db');
-
+const { ListData, PageData, MdArticle, EntityData } = require('../models/db');
+const path = require('path');
 // TODO: add 500 response
 
 async function getMdArticleList( req , res){
@@ -32,8 +32,29 @@ async function getMdArticleList( req , res){
 
 }
 
+async function getDefMdArticleModelName(req , res){
+
+
+  let raw_response = await EntityData.getMdArticleDefaultModel(req);
+
+  let fileName = raw_response.DATA[0][MdArticle.file];
+
+  let response = [];
+  let row = {};
+  row[PageData.COLUMN_01] = fileName;
+  response.push(row);
+
+  out = {}
+  out.DATA = response
+  out.CNT = response.length
+
+  //TODO: maybe change the file name
+  res.status(200).send(out); 
+}
+
 
 
 module.exports = {
-  getMdArticleList
+  getMdArticleList,
+  getDefMdArticleModelName
 }

@@ -2,6 +2,8 @@ version: "3.5"
 services:
   node-api:
     container_name: shftr-API
+    env_file:
+      - .env
     restart: always
     ports:
       - "3001:3001"

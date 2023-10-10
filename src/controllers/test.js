@@ -1,8 +1,8 @@
 // TODO: delete this controller
 
 const { EntityData } = require('../models/db');
-const { AuthManager } = require('../models/lib');
-
+const { AuthManager, FileManager } = require('../models/lib');
+const path = require('path');
 
 async function testPwd( req , res){
 
@@ -38,10 +38,19 @@ async function testUserByName( req , res){
     res.status(200).json(data);
 }
 
+async function testDownload(req, res){
+    var fp = path.join(__rootname, '/uploads', 'bmw_demo_def');
+    fp += FileManager.FILE_EXT;
+    console.log(fp);
+
+    res.download(fp, 'test.glb');
+}
+
 
 
 module.exports = {
     testPwd,
     testJwt,
-    testUserByName
+    testUserByName,
+    testDownload,
 }

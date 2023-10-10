@@ -18,12 +18,16 @@ const ctrlTest = require("../controllers/test");
  * Articles
  */
 router.get('/article/list', ctrlArticles.getMdArticleList);
+router.get('/article/file', ctrlArticles.getDefMdArticleModelName); //TODO add authentication
 
 /**
  * Models
  */
 router.post('/model/upload',auth, ctrlModels.uploadModel);
 router.post('/model/add', auth,ctrlModels.addMdModel);
+router.get('/model/file', ctrlModels.getActiveMdModelName);
+router.get('/model/download', ctrlModels.downloadMdModel);
+
 
 /**
  * Authentication
@@ -37,5 +41,6 @@ router.post("/login", ctrlAuth.login);
 router.get('/test', ctrlTest.testPwd);
 router.get('/test/jwt', ctrlTest.testJwt);
 router.get('/test/user', ctrlTest.testUserByName);
+router.get('/test/download',ctrlTest.testDownload);
 
 module.exports = router; 

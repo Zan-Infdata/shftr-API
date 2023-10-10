@@ -132,6 +132,51 @@ class EntityData {
 
   }
 
+
+  static async getMdArticleDefaultModel(req){
+    let params = {};
+
+    let qry = "";
+    
+    qry += "  SELECT ";
+    qry += "  "+ MdArticle.file +" ";
+  
+    qry += "  FROM " + MdArticle.table + " ";
+
+    qry += "  WHERE " + MdArticle.id +" = :i ";
+
+
+    params["i"] = req.query.aid;
+
+    const out = await Db.query(qry, params);
+    return out;
+
+
+  }
+
+
+  static async getMdModelAciveFiles(req){
+    let params = {};
+
+    let qry = "";
+
+    qry += "  SELECT ";
+    qry += "  "+ MdModel.file +" ";
+    qry += " ,"+ MdModel.weight +" ";
+  
+    qry += "  FROM " + MdModel.table + " ";
+
+    qry += "  WHERE " + MdModel.articleId +" = :ai ";
+    qry += "  AND " + MdModel.weight +" > 0 ";
+
+    params["ai"] = req.query.aid;
+
+    const out = await Db.query(qry, params);
+    return out;
+
+  }
+
+
 }
 
 class ListData {
@@ -182,6 +227,7 @@ class MdArticle {
     static file = "MD_ARTICLE_FILE";
     static dimId = "MD_ARTICLE_DIM_ID";
     static desc = "MD_ARTICLE_DESC";
+    static weight = "MD_ARTICLE_WGHT";
 
 }
 

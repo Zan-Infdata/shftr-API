@@ -52,7 +52,6 @@ class StorageManager {
 
 
 
-
 }
 
 class FileManager {
@@ -95,7 +94,7 @@ class AuthManager {
         return out;
     }
 
-    // TODO: add secret to enviroment variable
+    
     static generateJwt(user){
         const expiry = new Date();
         expiry.setDate(expiry.getDate() + 1);
@@ -107,13 +106,23 @@ class AuthManager {
           process.env.JWT_SECRET
         );
     }
+
 }
 
+class NumberManager {
+    static getRandomIntInclusive(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+      
+}
 
 
 module.exports = {
     MutlerManager,
     StorageManager,
     FileManager,
-    AuthManager
+    AuthManager,
+    NumberManager
 }
