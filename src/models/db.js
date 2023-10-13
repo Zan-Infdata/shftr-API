@@ -19,6 +19,8 @@ class Db {
       response.DATA = err
     }
 
+    connection.close();
+
     return response;
   }
 
@@ -168,6 +170,7 @@ class EntityData {
 
     qry += "  WHERE " + MdModel.articleId +" = :ai ";
     qry += "  AND " + MdModel.weight +" > 0 ";
+    qry += "  AND " + MdModel.isActive +" = 1 ";
 
     params["ai"] = req.query.aid;
 
