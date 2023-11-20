@@ -1,9 +1,42 @@
-const { EntityData, SyUser, MdModel, PageData } = require('../models/db');
+const { EntityData, SyUser, MdModel, PageData, ListData } = require('../models/db');
 const { MutlerManager, StorageManager, NumberManager } = require('../models/lib');
 const path = require('path');
 
 var storage = MutlerManager.mutlerStorage(StorageManager.UPLOADS_DIRECTORY);
 var upload = MutlerManager.mutlerUpload(storage)
+
+
+
+async function getMdModelById(req , res){
+
+
+    let raw_response = await EntityData.getMdModelById(req);
+
+    if(raw_response.DATA.CNT < 0){
+        res.status(404).send({ message: "No model found" });
+      }
+  
+    let model = raw_response.DATA[0];
+  
+    let response = [];
+    let row = {};
+    row[PageData.COLUMN_01] = model[MdModel.id];
+    row[PageData.COLUMN_02] = model[MdModel.name];
+    row[PageData.COLUMN_03] = model[MdModel.syUserId];
+    row[PageData.COLUMN_04] = model[MdModel.isActive];
+    row[PageData.COLUMN_05] = model[MdModel.articleId];
+    row[PageData.COLUMN_06] = model[MdModel.file];
+    row[PageData.COLUMN_07] = model[MdModel.weight];
+    response.push(row);
+  
+    out = {}
+    out.DATA = response
+    out.CNT = response.length
+  
+    //TODO: maybe change the file name
+    res.status(200).send(out); 
+  }
+
 
 //TODO: add 500 response and 400 response
 
@@ -46,12 +79,110 @@ async function uploadModel(req , res){
 
 }
 
+async function getAllMdModels(req , res){
+
+    let raw_response = await ListData.getMdModelList(req);
+
+    let response = [];
+
+
+    for (let i = 0; i < raw_response.DATA.length; i++) {
+        let row = {};
+        
+        let model = raw_response.DATA[i];
+
+        row[PageData.COLUMN_01] = model[MdModel.id];
+        row[PageData.COLUMN_02] = model[MdModel.name];
+        row[PageData.COLUMN_03] = model[MdModel.isActive];
+        row[PageData.COLUMN_04] = model[SyUser.name];
+
+        response.push(row);
+    }
+
+    
+    out = {}
+    out.DATA = response
+    out.CNT = response.length
+
+    //TODO: maybe change the file name
+    res.status(200).send(out);   
+    
+
+
+}
+
+
+async function getAllMdModels(req , res){
+
+    let raw_response = await ListData.getMdModelList(req);
+
+    let response = [];
+
+
+    for (let i = 0; i < raw_response.DATA.length; i++) {
+        let row = {};
+        
+        let model = raw_response.DATA[i];
+
+        row[PageData.COLUMN_01] = model[MdModel.id];
+        row[PageData.COLUMN_02] = model[MdModel.name];
+        row[PageData.COLUMN_03] = model[MdModel.isActive];
+        row[PageData.COLUMN_04] = model[SyUser.name];
+
+        response.push(row);
+    }
+
+    
+    out = {}
+    out.DATA = response
+    out.CNT = response.length
+
+    //TODO: maybe change the file name
+    res.status(200).send(out);   
+    
+
+
+}
+
+
+async function getUnverifiedMdModels(req , res){
+
+    let raw_response = await ListData.getUnverifiedMdModelList(req);
+
+    let response = [];
+
+
+    for (let i = 0; i < raw_response.DATA.length; i++) {
+        let row = {};
+        
+        let model = raw_response.DATA[i];
+
+        row[PageData.COLUMN_01] = model[MdModel.id];
+        row[PageData.COLUMN_02] = model[MdModel.name];
+        row[PageData.COLUMN_03] = model[MdModel.isActive];
+        row[PageData.COLUMN_04] = model[SyUser.name];
+
+        response.push(row);
+    }
+
+    
+    out = {}
+    out.DATA = response
+    out.CNT = response.length
+
+    //TODO: maybe change the file name
+    res.status(200).send(out);   
+    
+
+
+}
+
 
 
 
 async function getActiveMdModelName(req , res){
 
-    let raw_response = await EntityData.getMdModelAciveFiles(req);
+    let raw_response = await ListData.getMdArticleAciveFiles(req);
 
     let sum = 0;
     //sum the weights
@@ -114,9 +245,13 @@ async function downloadMdModel(req, res){
 
 
 module.exports = {
+    getMdModelById,
     uploadModel,
     addMdModel,
+    getAllMdModels,
+    getUnverifiedMdModels,
     getActiveMdModelName,
     downloadMdModel,
+    
 
 }

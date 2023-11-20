@@ -31,7 +31,6 @@ class MutlerManager {
             fileFilter: (req,file,callback)=> {  
                 let ext = path.extname(file.originalname);
                 if(ext == FileManager.FILE_EXT) {
-                    console.log('Extension Check');
                     callback(null,true);
                 }
                 else {

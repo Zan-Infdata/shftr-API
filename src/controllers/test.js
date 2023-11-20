@@ -6,8 +6,8 @@ const path = require('path');
 
 async function testPwd( req , res){
 
-
-    response = AuthManager.generatePassword("zan");
+    // n_a: test, admin: testadmin, user: testuser
+    response = AuthManager.generatePassword("testuser");
 
     let data = {};
     data.DATA = response;
@@ -22,7 +22,8 @@ async function testJwt( req , res){
     response = AuthManager.generateJwt({"id": 1, "name": "test"});
 
     let data = {};
-    data.DATA = response;
+    data.DATA = {"token":response};
+    data.CODE = 200;
 
     res.status(200).json(data);
 }
