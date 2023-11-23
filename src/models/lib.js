@@ -25,10 +25,29 @@ class MutlerManager {
     }
 
 
-    static mutlerUpload(strg){
+    static mutlerUploadModel(strg){
         var out = multer({
             storage: strg,
-            fileFilter: (req,file,callback)=> {  
+            fileFilter: (req, file, callback)=> {  
+
+                let ext = path.extname(file.originalname);
+                if(ext == FileManager.FILE_EXT) {
+                    callback(null,true);
+                }
+                else {
+                    callback('Only '+ FileManager.FILE_EXT +' are allowed', false);
+                }
+            }
+        }).single('file');
+
+        return out;
+    }
+
+    static mutlerUploadDefModel(strg){
+        var out = multer({
+            storage: strg,
+            fileFilter: (req, file, callback)=> {  
+
                 let ext = path.extname(file.originalname);
                 if(ext == FileManager.FILE_EXT) {
                     callback(null,true);
@@ -58,13 +77,19 @@ class FileManager {
 
     static generateFileName(body){
 
-        var out = "";
-        out += body.article + "-";
-        out += body.user + "-";
-        out += body.model;
-        out += this.FILE_EXT;
+        if(body.fileName !== undefined){
+            var out = body.fileName;
+        }
+        else{
+            var out = "";
+            out += body.article + "-";
+            out += body.user + "-";
+            out += body.model;
+            out += this.FILE_EXT;
+    
+            body.fName = out;
+        }
 
-        body.fName = out;
 
         return out;
 

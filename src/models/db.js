@@ -40,6 +40,9 @@ class PageData {
   static COLUMN_05 = "c05";
   static COLUMN_06 = "c06";
   static COLUMN_07 = "c07";
+  static COLUMN_08 = "c08";
+  static COLUMN_09 = "c09";
+  static COLUMN_10 = "c10";
 }
 
 class EntityData {
@@ -89,7 +92,7 @@ class EntityData {
     qry += "  AND " + SyUser.isActive +" = 1 ";
 
 
-    params["i"] = req.query.id;
+    params["i"] = req.query.uid;
 
     const out = await Db.query(qry,params);
 
@@ -109,6 +112,7 @@ class EntityData {
     qry += " ,"+ MdArticle.file +" ";
     qry += " ,"+ MdArticle.dimId +" ";
     qry += " ,"+ MdArticle.desc +" ";
+    qry += " ,"+ MdArticle.isActive +" ";
 
     qry += "  FROM " + MdArticle.table + " ";
 
@@ -137,6 +141,7 @@ class EntityData {
     qry += " ,"+ MdModel.file +" ";
     qry += " ,"+ MdModel.weight +" ";
     qry += " ,"+ MdModel.isActive +" ";
+    qry += " ,"+ MdModel.isVerified +" ";
 
     qry += "  FROM " + MdModel.table + " ";
 
@@ -168,6 +173,7 @@ class EntityData {
     qry += " ," + MdModel.articleId;
     qry += " ," + MdModel.file;
     qry += " ," + MdModel.weight;
+    qry += " ," + MdModel.isVerified;
     qry += " ) ";
 
     qry += " VALUES ( ";
@@ -177,6 +183,7 @@ class EntityData {
     qry += " ,:aid ";
     qry += " ,:f ";
     qry += " ,:w ";
+    qry += " ,:iv ";
     qry += " ) ";
 
 
@@ -186,6 +193,7 @@ class EntityData {
     params["aid"] = req.body.artId;
     params["f"] = "";
     params["w"] = 0;
+    params["iv"] = 0;
 
     const out = await Db.query(qry, params);
     return out
@@ -229,6 +237,7 @@ class EntityData {
     qry += "  FROM " + MdArticle.table + " ";
 
     qry += "  WHERE " + MdArticle.id +" = :i ";
+    qry += "    AND " + MdArticle.isActive +" = 1 ";
 
 
     params["i"] = req.query.aid;
@@ -236,6 +245,88 @@ class EntityData {
     const out = await Db.query(qry, params);
     return out;
 
+
+  }
+
+  static async updateMdArticleById(req){
+
+    let params = {};
+
+    let qry = "";
+
+    qry += "  UPDATE ";
+    qry += "  "+ MdArticle.table +" ";
+    qry += "  SET ";
+    qry += "  "+ MdArticle.name +" = :n ";
+    
+    qry += " ,"+ MdArticle.desc +" = :d ";
+    qry += " ,"+ MdArticle.dimId +" = :did ";
+    qry += " ,"+ MdArticle.isActive +" = :ia ";
+
+    qry += "  WHERE " + MdArticle.id +" = :i ";
+
+
+    params["i"] = req.body.aid;
+    params["n"] = req.body.aName;
+    params["d"] = req.body.aDesc;
+    params["did"] = req.body.dimId;
+    params["ia"] = req.body.ia;
+
+    const out = await Db.query(qry,params);
+
+    return out;
+
+  }
+
+
+  static async verifyMdModelById(req){
+
+    let params = {};
+
+    let qry = "";
+
+    qry += "  UPDATE ";
+    qry += "  "+ MdModel.table +" ";
+    qry += "  SET ";
+
+    qry += "  "+ MdModel.isActive +" = 1 ";
+    qry += " ,"+ MdModel.isVerified +" = 1 ";
+    qry += " ,"+ MdModel.weight +" = :w ";
+
+    qry += "  WHERE " + MdModel.id +" = :i ";
+
+
+    params["i"] = req.body.mid;
+    params["w"] = req.body.weight;
+
+    const out = await Db.query(qry,params);
+
+    return out;
+
+  }
+
+
+  static async updateDefArtModel(req){
+
+    let params = {};
+
+    let qry = "";
+
+    qry += "  UPDATE ";
+    qry += "  "+ MdArticle.table +" ";
+    qry += "  SET ";
+
+    qry += "  "+ MdArticle.file +" = :f ";
+
+    qry += "  WHERE " + MdArticle.id +" = :i ";
+
+
+    params["i"] = req.body.aid;
+    params["f"] = req.body.fileName;
+
+    const out = await Db.query(qry,params);
+
+    return out;
 
   }
 
@@ -273,7 +364,39 @@ class ListData {
   }
 
 
-  static async getMdArticleList(req) {
+  static async getActiveMdArticleList(req) {
+    let params = {}
+
+    let fltr = req.query.filter;
+    let qry = "";
+
+    qry += "  SELECT ";
+    qry += "  "+ MdArticle.id +" ";
+    qry += " ,"+ MdArticle.name +" ";
+  
+    qry += "  FROM " + MdArticle.table + " ";
+
+    qry += "  WHERE " + MdArticle.id +" > 1 ";
+    qry += "    AND " + MdArticle.isActive +" = 1 ";
+
+
+    if (fltr != null && fltr != "") {
+      
+      qry += "  AND " + MdArticle.name +" ";
+      qry += "  LIKE :f ";
+      params["f"] = Db.prepareLikeParam(fltr);
+
+    }
+  
+  
+    const out = await Db.query(qry,params);
+    return out;
+
+  }
+
+
+
+  static async getAllMdArticleList(req) {
 
 
     let params = {}
@@ -287,6 +410,7 @@ class ListData {
     qry += "  SELECT ";
     qry += "  "+ MdArticle.id +" ";
     qry += " ,"+ MdArticle.name +" ";
+    qry += " ,"+ MdArticle.isActive +" ";
   
     qry += "  FROM " + MdArticle.table + " ";
 
@@ -306,6 +430,8 @@ class ListData {
 
   }
 
+
+
   static async getMdModelList(req) {
 
 
@@ -321,12 +447,13 @@ class ListData {
     qry += "  m."+ MdModel.id +" ";
     qry += " ,m."+ MdModel.name +" ";
     qry += " ,m."+ MdModel.isActive +" ";
+    qry += " ,m."+ MdModel.isVerified +" ";
     qry += " ,s."+ SyUser.name +" ";
   
     qry += "  FROM " + MdModel.table + " AS m ";
     qry += "      ," + SyUser.table + " AS s ";
 
-    qry += "  WHERE m." + MdModel.id +" > 1 ";
+    qry += "  WHERE m." + MdModel.id + " > 1 ";
     qry += "  AND m." + MdModel.syUserId +" = s." + SyUser.id +" ";
 
     if (fltr != null && fltr != "") {
@@ -344,6 +471,47 @@ class ListData {
     return out;
 
   }
+
+
+
+  static async getMdModelListByUser(req) {
+
+
+    let params = {}
+
+    let uid = req.query.uid;
+
+
+
+    let qry = "";
+
+    qry += "  SELECT ";
+    qry += "  m."+ MdModel.id +" ";
+    qry += " ,m."+ MdModel.name +" ";
+    qry += " ,m."+ MdModel.weight +" ";
+    qry += " ,m."+ MdModel.isActive +" ";
+    qry += " ,m."+ MdModel.isVerified +" ";
+    qry += " ,a."+ MdArticle.name +" ";
+  
+    qry += "  FROM " + MdModel.table + " AS m ";
+    qry += "      ," + MdArticle.table + " AS a ";
+
+    qry += "  WHERE m." + MdModel.id + " > 1 ";
+    qry += "  AND m." + MdModel.syUserId +" = :uid ";
+    qry += "  AND m." + MdModel.articleId +" = a."+MdArticle.id+" ";
+
+    qry += "  ORDER BY " + MdModel.isVerified + " DESC ";
+    qry += "          ," + MdModel.id + " ";
+
+
+    params["uid"] = uid;
+  
+  
+    const out = await Db.query(qry,params);
+    return out;
+
+  }
+
   
 
   static async getUnverifiedMdModelList(req) {
@@ -399,6 +567,7 @@ class MdArticle {
     static file = "MD_ARTICLE_FILE";
     static dimId = "MD_ARTICLE_DIM_ID";
     static desc = "MD_ARTICLE_DESC";
+    static isActive = "MD_ARTICLE_ISACTIVE";
 
 }
 

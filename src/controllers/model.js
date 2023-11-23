@@ -1,9 +1,9 @@
-const { EntityData, SyUser, MdModel, PageData, ListData } = require('../models/db');
+const { EntityData, SyUser, MdModel, PageData, ListData, MdArticle } = require('../models/db');
 const { MutlerManager, StorageManager, NumberManager } = require('../models/lib');
 const path = require('path');
 
 var storage = MutlerManager.mutlerStorage(StorageManager.UPLOADS_DIRECTORY);
-var upload = MutlerManager.mutlerUpload(storage)
+var upload = MutlerManager.mutlerUploadModel(storage);
 
 
 
@@ -27,6 +27,7 @@ async function getMdModelById(req , res){
     row[PageData.COLUMN_05] = model[MdModel.articleId];
     row[PageData.COLUMN_06] = model[MdModel.file];
     row[PageData.COLUMN_07] = model[MdModel.weight];
+    row[PageData.COLUMN_08] = model[MdModel.isVerified];
     response.push(row);
   
     out = {}
@@ -68,8 +69,7 @@ async function uploadModel(req , res){
             res.end("Error uploading");
         }
         else {
-
-            // activate the model
+            // activate the mode    l
             test = await EntityData.activateModel(req);
 
             res.end("File is uploaded");
@@ -112,9 +112,9 @@ async function getAllMdModels(req , res){
 }
 
 
-async function getAllMdModels(req , res){
+async function getMdModelsByUser(req , res){
 
-    let raw_response = await ListData.getMdModelList(req);
+    let raw_response = await ListData.getMdModelListByUser(req);
 
     let response = [];
 
@@ -127,7 +127,9 @@ async function getAllMdModels(req , res){
         row[PageData.COLUMN_01] = model[MdModel.id];
         row[PageData.COLUMN_02] = model[MdModel.name];
         row[PageData.COLUMN_03] = model[MdModel.isActive];
-        row[PageData.COLUMN_04] = model[SyUser.name];
+        row[PageData.COLUMN_08] = model[MdModel.isVerified];
+        row[PageData.COLUMN_09] = model[MdArticle.name];
+
 
         response.push(row);
     }
@@ -242,6 +244,15 @@ async function downloadMdModel(req, res){
 }
 
 
+async function verifyMdModel(req , res){
+
+    let raw_response = await EntityData.verifyMdModelById(req);
+
+    res.status(raw_response.CODE).send(raw_response.DATA); 
+
+}
+
+
 
 
 module.exports = {
@@ -252,6 +263,8 @@ module.exports = {
     getUnverifiedMdModels,
     getActiveMdModelName,
     downloadMdModel,
+    getMdModelsByUser,
+    verifyMdModel,
     
 
 }

@@ -18,26 +18,33 @@ const ctrlTest = require("../controllers/test");
 /**
  * Articles
  */
-router.get('/article/list', ctrlArticles.getMdArticleList);
+router.get('/article/list', ctrlArticles.getActiveMdArticleList);
+router.get('/article/list/all', auth, ctrlArticles.getAllMdArticleList);
 router.get('/article', ctrlArticles.getMdArticleById);
 router.get('/article/file', ctrlArticles.getDefMdArticleModelName); //TODO: add authentication
 router.get('/article/models', ctrlArticles.getAllActiveMdArticleModels);
+router.post('/article/update', auth, ctrlArticles.updateMdArticleById);
+router.post('/article/upload', auth, ctrlArticles.uploadDefModel);
 
-/**
+
+/** 
  * Models
  */
 router.post('/model/upload', auth, ctrlModels.uploadModel);
+router.post('/model/verify', auth, ctrlModels.verifyMdModel);
 router.post('/model/add', auth, ctrlModels.addMdModel);
 router.get('/model', ctrlModels.getMdModelById);  //TODO: add authentication
+router.get('/model/user', auth, ctrlModels.getMdModelsByUser);
 router.get('/model/file', ctrlModels.getActiveMdModelName);  //TODO: add authentication
-router.get('/model/all', ctrlModels.getAllMdModels); //TODO: add authentication
-router.get('/model/unverified', ctrlModels.getUnverifiedMdModels); //TODO: add authentication 
+router.get('/model/all', auth, ctrlModels.getAllMdModels);
+router.get('/model/unverified', auth,  ctrlModels.getUnverifiedMdModels);
 router.get('/model/download', ctrlModels.downloadMdModel); //TODO: add authentication
 
 /**
  * User
  */
-router.get('/user', ctrlUsers.getUserByName); //TODO: add authentication
+router.get('/user', ctrlUsers.getUserByName); // TODO: add authentication ?
+router.get('/user/id', ctrlUsers.getUserById); // TODO: add authentication ?
 
 /**
  * Authentication
